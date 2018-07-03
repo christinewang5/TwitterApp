@@ -1,10 +1,14 @@
 package com.codepath.apps.restclienttemplate;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -23,6 +27,8 @@ public class TimelineActivity extends AppCompatActivity {
     TweetAdapter tweetAdapter;
     ArrayList<Tweet> tweets;
     RecyclerView rvTweets;
+    // context for rendering
+    Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +49,29 @@ public class TimelineActivity extends AppCompatActivity {
         rvTweets.setAdapter(tweetAdapter);
 
         populateTimeline();
+    }
+
+    // add action item for compose activity
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // inflate the menu, add items to the action bar
+        getMenuInflater().inflate(R.menu.compose, menu);
+        return true;
+    }
+
+    // activate compose after clicking compose icon
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.miCompose:
+                // add intent stuff here
+                // create intent for the new activity
+                Intent intent = new Intent(this, ComposeActivity.class);
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     private void populateTimeline() {

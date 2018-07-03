@@ -1,10 +1,10 @@
 package com.codepath.apps.restclienttemplate;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.view.Menu;
 import android.view.View;
 
 import com.codepath.apps.restclienttemplate.models.SampleModel;
@@ -13,17 +13,20 @@ import com.codepath.oauth.OAuthLoginActionBarActivity;
 
 public class LoginActivity extends OAuthLoginActionBarActivity<TwitterClient> {
 
+
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_login);
+
 
 		final SampleModel sampleModel = new SampleModel();
 		sampleModel.setName("CodePath");
 
 		final SampleModelDao sampleModelDao = ((TwitterApp) getApplicationContext()).getMyDatabase().sampleModelDao();
 
-		AsyncTask<SampleModel, Void, Void> task = new AsyncTask<SampleModel, Void, Void>() {
+		@SuppressLint("StaticFieldLeak") AsyncTask<SampleModel, Void, Void> task = new AsyncTask<SampleModel, Void, Void>() {
 			@Nullable
             @Override
 			protected Void doInBackground(SampleModel... sampleModels) {
@@ -34,15 +37,7 @@ public class LoginActivity extends OAuthLoginActionBarActivity<TwitterClient> {
 		task.execute(sampleModel);
 	}
 
-
-	// Inflate the menu; this adds items to the action bar if it is present.
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.login, menu);
-		return true;
-	}
-
-	// OAuth authenticated successfully, launch primary authenticated activity
+    // OAuth authenticated successfully, launch primary authenticated activity
 	// i.e Display application "homepage"
 	@Override
 	public void onLoginSuccess() {
