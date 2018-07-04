@@ -1,6 +1,5 @@
 package com.codepath.apps.restclienttemplate;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -16,6 +15,7 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.parceler.Parcels;
 
 import java.util.ArrayList;
 
@@ -27,8 +27,6 @@ public class TimelineActivity extends AppCompatActivity {
     TweetAdapter tweetAdapter;
     ArrayList<Tweet> tweets;
     RecyclerView rvTweets;
-    // context for rendering
-    Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,14 +62,23 @@ public class TimelineActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case R.id.miCompose:
-                // add intent stuff here
                 // create intent for the new activity
                 Intent intent = new Intent(this, ComposeActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent,0);
+                Log.i("TimelineActivity", "Launching ComposeActivity");
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Tweet tweet = Parcels.unwrap(data.getParcelableExtra(Tweet.class.getSimpleName()));
+        Log.i("TimelineActivity", "Added new tweet to top of the timeline");
+        tweets.add(0, tweet);
+        tweetAdapter.notifyItemInserted(0);
+        rvTweets.scrollToPosition(0);
     }
 
     private void populateTimeline() {
@@ -89,17 +96,17 @@ public class TimelineActivity extends AppCompatActivity {
                 // for each entry, deserialize the JSON object
                 for (int i = 0; i < response.length(); i++) {
                     try {
+                        // convert each object to a Tweet model
                         Tweet tweet = Tweet.fromJSON(response.getJSONObject(i));
+                        // add that Tweet model to our data source
                         tweets.add(tweet);
+                        // notify the adapter that we've added an item
                         tweetAdapter.notifyItemInserted(tweets.size() -  1 );
                     }
                     catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }
-                // convert each object to a Tweet model
-                // add that Tweet model to our data source
-                // notify the adapter that we've added an item
             }
 
             @Override
