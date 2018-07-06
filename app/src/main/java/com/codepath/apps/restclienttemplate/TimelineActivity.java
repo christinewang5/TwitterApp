@@ -3,6 +3,7 @@ package com.codepath.apps.restclienttemplate;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -28,11 +29,15 @@ public class TimelineActivity extends AppCompatActivity {
     TweetAdapter tweetAdapter;
     ArrayList<Tweet> tweets;
     RecyclerView rvTweets;
+    // MenuItem miActionProgressItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timeline);
+        // show custom action bar
+        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM | ActionBar.DISPLAY_SHOW_HOME);
+        getSupportActionBar().setCustomView(R.layout.actionbar_timeline);
 
         client = TwitterApp.getRestClient(this);
 
@@ -53,15 +58,34 @@ public class TimelineActivity extends AppCompatActivity {
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                // Your code to refresh the list here.
-                // Make sure you call swipeContainer.setRefreshing(false)
-                // once the network request has completed successfully.
+                // refresh the list
+                // showProgressBar();
                 fetchTimelineAsync(0);
             }
         });
 
         populateTimeline();
     }
+
+    /*@Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        // Store instance of the menu item containing progress
+        miActionProgressItem = menu.findItem(R.id.miActionProgress);
+        // Extract the action-view from the menu item
+        ProgressBar v =  (ProgressBar) MenuItemCompat.getActionView(miActionProgressItem);
+        // Return to finish
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    public void showProgressBar() {
+        // Show progress item
+        miActionProgressItem.setVisible(true);
+    }
+
+    public void hideProgressBar() {
+        // Hide progress item
+        miActionProgressItem.setVisible(false);
+    }*/
 
     private void fetchTimelineAsync(int page) {
         // add new items to adapter
@@ -82,6 +106,7 @@ public class TimelineActivity extends AppCompatActivity {
                     }
                 }
                 tweetAdapter.addAll(tweets);
+                // hideProgressBar();
                 // call setRefreshing(false) to signal refresh has finished
                 swipeContainer.setRefreshing(false);
             }
@@ -93,15 +118,15 @@ public class TimelineActivity extends AppCompatActivity {
         });
     }
 
-    // add action item for compose activity
+    // add action item for timeline activity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // inflate the menu, add items to the action bar
-        getMenuInflater().inflate(R.menu.compose, menu);
+        getMenuInflater().inflate(R.menu.timeline, menu);
         return true;
     }
 
-    // activate compose after clicking compose icon
+    // activate timeline after clicking timeline icon
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {

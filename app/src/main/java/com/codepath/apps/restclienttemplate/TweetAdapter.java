@@ -1,6 +1,7 @@
 package com.codepath.apps.restclienttemplate;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -12,10 +13,12 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 
+import org.parceler.Parcels;
+
 import java.util.List;
 
 public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> {
-    private List<Tweet> mTweets;
+    List<Tweet> mTweets;
     Context context;
 
     // pass in the Tweets array in the constructor
@@ -42,27 +45,52 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
         Tweet tweet = mTweets.get(position);
 
         // populate the views according to this data
-        holder.tvUsername.setText(tweet.user.name);
+        holder.tvName.setText(tweet.user.name);
         holder.tvBody.setText(tweet.body);
         holder.tvCreatedAt.setText(tweet.createdAt);
+        holder.tvUsername.setText("@"+tweet.user.screenName);
         Glide.with(context).load(tweet.user.profileImageUrl).into(holder.ivProfileImage);
     }
 
     // create ViewHolder class
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder {
         public ImageView ivProfileImage;
+        public TextView tvName;
         public TextView tvUsername;
-        public TextView tvBody;
         public TextView tvCreatedAt;
+        public TextView tvBody;
+        public ImageView ivReply;
 
         public ViewHolder(View itemView) {
             super(itemView);
 
             // perform findViewById lookups
+
             ivProfileImage = itemView.findViewById(R.id.ivProfileImage);
-            tvUsername = itemView.findViewById(R.id.tvUserName);
-            tvBody = itemView.findViewById(R.id.tvBody);
+            tvName = itemView.findViewById(R.id.tvName);
+            tvUsername = itemView.findViewById(R.id.tvName);
             tvCreatedAt = itemView.findViewById(R.id.tvCreatedAt);
+            tvBody = itemView.findViewById(R.id.tvBody);
+            ivReply = itemView.findViewById(R.id.ivReply);
+
+            ivReply.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // gets item position
+                    int position = getAdapterPosition();
+                    // make sure the position is valid, i.e. actually exists in the view
+                    if (position != RecyclerView.NO_POSITION) {
+                        // get the tweet at the position, this won't work if the class is static
+                        Tweet tweet = mTweets.get(position);
+                        // create intent for the new activity
+                        Intent intent = new Intent(context, ComposeReplyActivity.class);
+                        // serialize the tweet using parceler, use its short name as a key
+                        intent.putExtra(Tweet.class.getSimpleName(), Parcels.wrap(tweet));
+                        // show the activity
+                        context.startActivity(intent);
+                    }
+                }
+            });
         }
     }
 

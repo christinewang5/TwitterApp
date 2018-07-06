@@ -4,57 +4,41 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ComposeActivity">
+    tools:context=".ComposeReplyActivity">
 
-    <ImageView
-        android:id="@+id/ivProfileImage"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+    <TextView
+        android:id="@+id/tvReplyTo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="5dp"
-        app:srcCompat="@android:color/black" />
+        android:text="Replying to" />
 
     <TextView
-        android:id="@+id/tvUsername"
+        android:id="@+id/tvReplyUser"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="5dp"
-        android:layout_toEndOf="@+id/ivProfileImage"
-        android:text="First Last"
-        android:textColor="#000000"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/tvName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="5dp"
-        android:layout_toEndOf="@+id/tvUsername"
-        android:fontFamily="sans-serif"
-        android:text=" @username" />
+        android:layout_toEndOf="@+id/tvReplyTo"
+        android:layout_weight="1"
+        android:text=" @user" />
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/text_input_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/ivProfileImage"
+        android:layout_below="@+id/tvReplyTo"
         app:counterEnabled="true"
         app:counterMaxLength="140"
         app:counterOverflowTextAppearance="@style/counterOverride"
         app:counterTextAppearance="@style/counterText">
 
         <EditText
-            android:id="@+id/etTweetBody"
+            android:id="@+id/etTweetBodyReply"
             android:layout_width="match_parent"
-            android:layout_height="160dp"
-            android:layout_marginBottom="8dp"
+            android:layout_height="182dp"
+            android:layout_marginBottom="6dp"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
@@ -63,15 +47,15 @@
     </android.support.design.widget.TextInputLayout>
 
     <Button
-        android:id="@+id/btnSendTweet"
+        android:id="@+id/btnReply"
         android:layout_width="wrap_content"
-        android:layout_height="32dp"
+        android:layout_height="25dp"
         android:layout_alignParentEnd="true"
         android:layout_below="@+id/text_input_layout"
         android:background="@drawable/tweet_button"
-        android:textColor="#FFFFFF"
-        android:onClick="onTweet"
+        android:onClick="onReply"
         android:text="@string/tweet"
+        android:textColor="#FFFFFF"
         app:layout_constraintTop_toBottomOf="@+id/text_input_layout"
         tools:layout_editor_absoluteX="280dp" />
 
