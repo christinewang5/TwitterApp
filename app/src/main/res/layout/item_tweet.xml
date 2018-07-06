@@ -4,7 +4,7 @@
     android:layout_width="match_parent" android:layout_height="wrap_content"
     android:layout_margin="5dp">
 
-    <!--TODO - make circle-->
+    <!--TODO - make profile pic into circle-->
     <ImageView
         android:id="@+id/ivProfileImage"
         android:layout_width="50dp"
@@ -28,7 +28,7 @@
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/tvName"
+        android:id="@+id/tvUsername"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
@@ -40,10 +40,9 @@
         android:id="@+id/tvCreatedAt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="0dp"
-        android:layout_toEndOf="@+id/tvName"
+        android:layout_marginRight="5dp"
         android:text="time"
         android:textAppearance="@style/TextAppearance.AppCompat.Small" />
 
@@ -55,14 +54,34 @@
         android:layout_below="@+id/tvName"
         android:text="TextView" />
 
-    <ImageView
-        android:id="@+id/ivReply"
-        android:tint="@color/medium_gray"
+    <Button
+        android:id="@+id/btnReply"
         android:layout_width="16dp"
         android:layout_height="16dp"
-        android:layout_alignEnd="@+id/tvBody"
         android:layout_below="@+id/tvBody"
-        android:layout_marginTop="2dp"
-        app:srcCompat="@drawable/ic_reply" />
+        android:layout_marginLeft="5dp"
+        android:layout_toEndOf="@+id/ivProfileImage"
+        android:background="@drawable/ic_reply"
+        android:onClick="OnReply" />
+
+    <Button
+        android:id="@+id/btnLike"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_below="@+id/tvBody"
+        android:layout_marginLeft="10dp"
+        android:layout_toEndOf="@+id/btnReply"
+        android:background="@drawable/ic_vector_heart_stroke"
+        android:onClick="OnLike" />
+
+    <Button
+        android:id="@+id/btnRetweet"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_below="@+id/tvBody"
+        android:layout_marginLeft="10dp"
+        android:layout_toEndOf="@+id/btnLike"
+        android:background="@drawable/ic_vector_retweet_stroke"
+        android:onClick="onRetweet" />
 
 </RelativeLayout>

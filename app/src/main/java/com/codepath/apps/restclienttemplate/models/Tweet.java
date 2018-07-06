@@ -17,7 +17,8 @@ public class Tweet {
     public long uid; // database ID for the tweet
     public User user;
     public String createdAt;
-
+    public boolean retweeted;
+    public boolean favorited;
     public Tweet() {}
 
     // deserialize the JSON
@@ -29,7 +30,8 @@ public class Tweet {
         tweet.uid = jsonObject.getLong("id");
         tweet.createdAt = getRelativeTimeAgo(jsonObject.getString("created_at"));
         tweet.user = User.fromJSON(jsonObject.getJSONObject("user"));
-
+        tweet.retweeted = jsonObject.getBoolean("retweeted");
+        tweet.favorited = jsonObject.getBoolean("favorited");
         return tweet;
     }
 
@@ -43,7 +45,7 @@ public class Tweet {
         try {
             long dateMillis = sf.parse(rawJsonDate).getTime();
             relativeDate = DateUtils.getRelativeTimeSpanString(dateMillis,
-                    System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS).toString();
+                    System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS, DateUtils.FORMAT_ABBREV_ALL).toString();
         } catch (ParseException e) {
             e.printStackTrace();
         }

@@ -1,29 +1,38 @@
 package com.codepath.apps.restclienttemplate;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.codepath.apps.restclienttemplate.models.Tweet;
+import com.loopj.android.http.JsonHttpResponseHandler;
 
+import org.json.JSONObject;
 import org.parceler.Parcels;
 
 import java.util.List;
 
+import cz.msebera.android.httpclient.Header;
+
 public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> {
     List<Tweet> mTweets;
     Context context;
+    TwitterClient client;
 
     // pass in the Tweets array in the constructor
     public TweetAdapter(List<Tweet> tweets) {
         mTweets = tweets;
+        client = TwitterApp.getRestClient(context);
     }
 
     // for each row, inflate the layout and cache reference into ViewHolder class
@@ -32,7 +41,6 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
-
         View tweetView = inflater.inflate(R.layout.item_tweet, parent, false);
         ViewHolder viewHolder = new ViewHolder(tweetView);
         return viewHolder;
@@ -49,6 +57,9 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
         holder.tvBody.setText(tweet.body);
         holder.tvCreatedAt.setText(tweet.createdAt);
         holder.tvUsername.setText("@"+tweet.user.screenName);
+        if (tweet.favorited) { holder.btnLike.setBackgroundResource(R.drawable.ic_vector_heart); }
+        if (tweet.retweeted) { holder.btnRetweet.setBackgroundResource(R.drawable.ic_vector_retweet); }
+
         Glide.with(context).load(tweet.user.profileImageUrl).into(holder.ivProfileImage);
     }
 
@@ -59,7 +70,9 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
         public TextView tvUsername;
         public TextView tvCreatedAt;
         public TextView tvBody;
-        public ImageView ivReply;
+        public Button btnReply;
+        public Button btnLike;
+        public Button btnRetweet;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -68,12 +81,14 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
 
             ivProfileImage = itemView.findViewById(R.id.ivProfileImage);
             tvName = itemView.findViewById(R.id.tvName);
-            tvUsername = itemView.findViewById(R.id.tvName);
+            tvUsername = itemView.findViewById(R.id.tvUsername);
             tvCreatedAt = itemView.findViewById(R.id.tvCreatedAt);
             tvBody = itemView.findViewById(R.id.tvBody);
-            ivReply = itemView.findViewById(R.id.ivReply);
+            btnReply = itemView.findViewById(R.id.btnReply);
+            btnLike = itemView.findViewById(R.id.btnLike);
+            btnRetweet = itemView.findViewById(R.id.btnRetweet);
 
-            ivReply.setOnClickListener(new View.OnClickListener() {
+            btnReply.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     // gets item position
@@ -87,7 +102,99 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
                         // serialize the tweet using parceler, use its short name as a key
                         intent.putExtra(Tweet.class.getSimpleName(), Parcels.wrap(tweet));
                         // show the activity
-                        context.startActivity(intent);
+                        ((Activity) context).startActivityForResult(intent,1);
+                    }
+                }
+            });
+
+            btnLike.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // gets item position
+                    int position = getAdapterPosition();
+                    // make sure the position is valid, i.e. actually exists in the view
+                    if (position != RecyclerView.NO_POSITION) {
+                        // get the tweet at the position, this won't work if the class is static
+                        Tweet tweet = mTweets.get(position);
+                        if (tweet.favorited) {
+                            // set to unlike
+                            btnLike.setBackgroundResource(R.drawable.ic_vector_heart_stroke);
+                            client.unlike(tweet.uid, new JsonHttpResponseHandler() {
+                                @Override
+                                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                                    Log.d("TweetAdapter", "Succeeded liking");
+                                    super.onSuccess(statusCode, headers, response);
+                                }
+
+                                @Override
+                                public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                                    Log.e("TweetAdapter", "Failed liking");
+                                    super.onFailure(statusCode, headers, throwable, errorResponse);
+                                }
+                            });
+                        }
+                        else {
+                            // fill in heart
+                            btnLike.setBackgroundResource(R.drawable.ic_vector_heart);
+                            client.like(tweet.uid, new JsonHttpResponseHandler() {
+                                @Override
+                                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                                    Log.d("TweetAdapter", "Succeeded liking");
+                                    super.onSuccess(statusCode, headers, response);
+                                }
+
+                                @Override
+                                public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                                    Log.e("TweetAdapter", "Failed liking");
+                                    super.onFailure(statusCode, headers, throwable, errorResponse);
+                                }
+                            });
+                        }
+                    }
+                }
+            });
+
+            btnRetweet.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // gets item position
+                    int position = getAdapterPosition();
+                    // make sure the position is valid, i.e. actually exists in the view
+                    if (position != RecyclerView.NO_POSITION) {
+                        // get the tweet at the position, this won't work if the class is static
+                        Tweet tweet = mTweets.get(position);
+                        if (tweet.retweeted) {
+                            // unretweet
+                            btnRetweet.setBackgroundResource(R.drawable.ic_vector_retweet_stroke);
+                            client.unretweet(tweet.uid, new JsonHttpResponseHandler() {
+                                @Override
+                                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                                    Log.d("TweetAdapter", "Succeeded retweet");
+                                    super.onSuccess(statusCode, headers, response);
+                                }
+                                @Override
+                                public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                                    Log.e("TweetAdapter", "Failed retweet");
+                                    super.onFailure(statusCode, headers, throwable, errorResponse);
+                                }
+                            });
+                        }
+                        else {
+                            // fill in retweet
+                            btnRetweet.setBackgroundResource(R.drawable.ic_vector_retweet);
+                            client.retweet(tweet.uid, new JsonHttpResponseHandler() {
+                                @Override
+                                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                                    Log.d("TweetAdapter", "Succeeded retweet");
+                                    super.onSuccess(statusCode, headers, response);
+                                }
+                                @Override
+                                public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                                    Log.e("TweetAdapter", "Failed retweet");
+                                    super.onFailure(statusCode, headers, throwable, errorResponse);
+                                }
+                            });
+                        }
                     }
                 }
             });
@@ -109,6 +216,4 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
         mTweets.addAll(list);
         notifyDataSetChanged();
     }
-
-
 }

@@ -6,22 +6,55 @@
     android:layout_height="match_parent"
     tools:context=".ComposeReplyActivity">
 
+    <ImageView
+        android:id="@+id/ivProfileImage"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="5dp"
+        app:srcCompat="@android:color/black" />
+
+    <TextView
+        android:id="@+id/tvName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_toEndOf="@+id/ivProfileImage"
+        android:text="First Last"
+        android:textColor="#000000"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tvUsername"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_toEndOf="@+id/tvName"
+        android:fontFamily="sans-serif"
+        android:text=" @username" />
+
     <TextView
         android:id="@+id/tvReplyTo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:text="Replying to" />
+        android:layout_below="@+id/ivProfileImage"
+        android:layout_marginTop="5dp"
+        android:text="Replying to " />
 
     <TextView
         android:id="@+id/tvReplyUser"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
+        android:layout_below="@+id/ivProfileImage"
+        android:layout_marginTop="5dp"
         android:layout_toEndOf="@+id/tvReplyTo"
         android:layout_weight="1"
-        android:text=" @user" />
+        android:text=" @user"
+        android:textColor="@color/twitter_blue" />
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/text_input_layout"
@@ -35,10 +68,10 @@
         app:counterTextAppearance="@style/counterText">
 
         <EditText
-            android:id="@+id/etTweetBodyReply"
+            android:id="@+id/etReplyBody"
             android:layout_width="match_parent"
-            android:layout_height="182dp"
-            android:layout_marginBottom="6dp"
+            android:layout_height="160dp"
+            android:layout_marginBottom="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
@@ -49,12 +82,12 @@
     <Button
         android:id="@+id/btnReply"
         android:layout_width="wrap_content"
-        android:layout_height="25dp"
+        android:layout_height="36dp"
         android:layout_alignParentEnd="true"
         android:layout_below="@+id/text_input_layout"
-        android:background="@drawable/tweet_button"
+        android:background="@drawable/btn_tweet"
         android:onClick="onReply"
-        android:text="@string/tweet"
+        android:text="Reply"
         android:textColor="#FFFFFF"
         app:layout_constraintTop_toBottomOf="@+id/text_input_layout"
         tools:layout_editor_absoluteX="280dp" />

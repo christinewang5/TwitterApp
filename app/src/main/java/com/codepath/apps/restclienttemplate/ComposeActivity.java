@@ -48,7 +48,7 @@ public class ComposeActivity extends AppCompatActivity {
         // text field containing updated item description
         ivProfileImage = findViewById(R.id.ivProfileImage);
         tvName = findViewById(R.id.tvName);
-        tvUsername = findViewById(R.id.tvName);
+        tvUsername = findViewById(R.id.tvUsername);
         etTweetBody = findViewById(R.id.etTweetBody);
 
         fillUserData();
@@ -62,14 +62,13 @@ public class ComposeActivity extends AppCompatActivity {
                 try {
                     cur_user = User.fromJSON(response);
                     // put profile image with glide
-                    Glide.with(context).load(cur_user.getProfileImageUrl()).into(ivProfileImage);
+                    Glide.with(context).load(cur_user.profileImageUrl).into(ivProfileImage);
                     // set username
                     tvUsername.setText("@"+cur_user.screenName);
                     tvName.setText(cur_user.name);
                 } catch (JSONException e) {
                     Log.e("ComposeActivity", "Failed parsing current user");
                 }
-
             }
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
@@ -84,9 +83,9 @@ public class ComposeActivity extends AppCompatActivity {
 
         client.sendTweet(tweetString, new JsonHttpResponseHandler(){
             @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+            public void onSuccess(int statusCode, Header[ ] headers, JSONObject response) {
                 try {
-                    Log.i("ComposeActivity", "Succeeded sending tweet");
+                    Log.d("ComposeActivity", "Succeeded sending tweet");
                     Tweet tweet = Tweet.fromJSON(response);
                     // prepare data intent
                     Intent data = new Intent();

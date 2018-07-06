@@ -60,7 +60,9 @@ public class TimelineActivity extends AppCompatActivity {
             public void onRefresh() {
                 // refresh the list
                 // showProgressBar();
-                fetchTimelineAsync(0);
+                tweetAdapter.clear();
+                populateTimeline();
+                swipeContainer.setRefreshing(false);
             }
         });
 
@@ -87,37 +89,6 @@ public class TimelineActivity extends AppCompatActivity {
         miActionProgressItem.setVisible(false);
     }*/
 
-    private void fetchTimelineAsync(int page) {
-        // add new items to adapter
-        client.getHomeTimeline(new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-                // clear out old items
-                tweetAdapter.clear();
-                 for (int i = 0; i < response.length(); i++) {
-                    try {
-                        // convert each object to a Tweet model
-                        Tweet tweet = Tweet.fromJSON(response.getJSONObject(i));
-                        // add that Tweet model to our data source
-                        tweets.add(tweet);
-                    }
-                    catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-                tweetAdapter.addAll(tweets);
-                // hideProgressBar();
-                // call setRefreshing(false) to signal refresh has finished
-                swipeContainer.setRefreshing(false);
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
-                Log.d("TimelineActivity", "Fetch timeline error: " + throwable.toString());
-            }
-        });
-    }
-
     // add action item for timeline activity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -134,7 +105,7 @@ public class TimelineActivity extends AppCompatActivity {
                 // create intent for the new activity
                 Intent intent = new Intent(this, ComposeActivity.class);
                 startActivityForResult(intent,0);
-                Log.i("TimelineActivity", "Launching ComposeActivity");
+                Log.d("TimelineActivity", "Launching ComposeActivity");
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -144,7 +115,7 @@ public class TimelineActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Tweet tweet = Parcels.unwrap(data.getParcelableExtra(Tweet.class.getSimpleName()));
-        Log.i("TimelineActivity", "Added new tweet to top of the timeline");
+        Log.d("TimelineActivity", "Added new tweet to top of the timeline");
         tweets.add(0, tweet);
         tweetAdapter.notifyItemInserted(0);
         rvTweets.scrollToPosition(0);
@@ -155,7 +126,6 @@ public class TimelineActivity extends AppCompatActivity {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
                 Log.d("TwitterClient", response.toString());
-
                 // iterate through the JSON array
                 // for each entry, deserialize the JSON object
                 for (int i = 0; i < response.length(); i++) {
