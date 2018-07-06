@@ -50,8 +50,7 @@ public class TwitterClient extends OAuthBaseClient {
 		client.get(apiUrl, params, handler);
 	}
 
-
-
+	// TODO - use twitter API auto_populate_reply_metadata param
     public void sendTweet(String message, long in_reply_to_status_id, AsyncHttpResponseHandler handler) {
         // passes relative path to endpoint
         String apiUrl = getApiUrl("statuses/update.json");

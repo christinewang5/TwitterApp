@@ -42,7 +42,7 @@ public class TimelineActivity extends AppCompatActivity {
         client = TwitterApp.getRestClient(this);
 
         // find the RecyclerView
-        rvTweets = findViewById(R.id.rvTweet);
+        rvTweets = findViewById(R.id.rvTweets);
         //init the arraylist
         tweets = new ArrayList<>();
         // construct the adapter from this data source
@@ -68,26 +68,6 @@ public class TimelineActivity extends AppCompatActivity {
 
         populateTimeline();
     }
-
-    /*@Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        // Store instance of the menu item containing progress
-        miActionProgressItem = menu.findItem(R.id.miActionProgress);
-        // Extract the action-view from the menu item
-        ProgressBar v =  (ProgressBar) MenuItemCompat.getActionView(miActionProgressItem);
-        // Return to finish
-        return super.onPrepareOptionsMenu(menu);
-    }
-
-    public void showProgressBar() {
-        // Show progress item
-        miActionProgressItem.setVisible(true);
-    }
-
-    public void hideProgressBar() {
-        // Hide progress item
-        miActionProgressItem.setVisible(false);
-    }*/
 
     // add action item for timeline activity
     @Override
@@ -142,13 +122,11 @@ public class TimelineActivity extends AppCompatActivity {
                     }
                 }
             }
-
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
                 Log.d("TwitterClient", errorResponse.toString());
                 throwable.printStackTrace();
             }
-
         });
     }
 }
