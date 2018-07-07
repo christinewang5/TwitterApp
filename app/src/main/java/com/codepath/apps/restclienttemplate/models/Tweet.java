@@ -1,7 +1,9 @@
 package com.codepath.apps.restclienttemplate.models;
 
 import android.text.format.DateUtils;
+import android.util.Log;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.parceler.Parcel;
@@ -19,9 +21,12 @@ public class Tweet {
     public String createdAt;
     public boolean retweeted;
     public boolean favorited;
-    public Tweet() {}
     public int retweetCount;
     public int favoriteCount;
+    public String embedUrl;
+
+    public Tweet() {}
+
 
     // deserialize the JSON
     public static Tweet fromJSON(JSONObject jsonObject) throws JSONException {
@@ -36,6 +41,16 @@ public class Tweet {
         tweet.favorited = jsonObject.getBoolean("favorited");
         tweet.retweetCount = jsonObject.getInt("retweet_count");
         tweet.favoriteCount = jsonObject.getInt("favorite_count");
+        JSONObject entities = jsonObject.getJSONObject("entities");
+        try {
+            JSONArray media = entities.getJSONArray("media");
+            if (media.length() != 0) {
+                tweet.embedUrl = media.getJSONObject(0).getString("media_url");
+            }
+        } catch (Exception e){
+            tweet.embedUrl = "";
+            Log.d("Tweet", "No embded Url");
+        }
         return tweet;
     }
 

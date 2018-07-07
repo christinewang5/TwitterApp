@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.apps.restclienttemplate.models.User;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -62,7 +63,7 @@ public class ComposeActivity extends AppCompatActivity {
                 try {
                     cur_user = User.fromJSON(response);
                     // put profile image with glide
-                    Glide.with(context).load(cur_user.profileImageUrl).into(ivProfileImage);
+                    Glide.with(context).load(cur_user.profileImageUrl).apply(RequestOptions.circleCropTransform()).into(ivProfileImage);
                     // set username
                     tvUsername.setText("@"+cur_user.screenName);
                     tvName.setText(cur_user.name);

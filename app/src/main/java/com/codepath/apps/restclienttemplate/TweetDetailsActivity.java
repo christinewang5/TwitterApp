@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
@@ -58,7 +59,7 @@ public class TweetDetailsActivity extends AppCompatActivity {
         tvRetweetCount.setText(String.valueOf(tweet.retweetCount));
         if (tweet.favorited) { btnLike.setBackgroundResource(R.drawable.ic_vector_heart); }
         if (tweet.retweeted) { btnRetweet.setBackgroundResource(R.drawable.ic_vector_retweet); }
-        Glide.with(this).load(tweet.user.profileImageUrl).into(ivProfileImage);
+        Glide.with(this).load(tweet.user.profileImageUrl).apply(RequestOptions.circleCropTransform()).into(ivProfileImage);
     }
 
     @OnClick(R.id.btnReply)

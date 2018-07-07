@@ -13,7 +13,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+import com.codepath.apps.restclienttemplate.models.GlideApp;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
@@ -26,6 +27,12 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cz.msebera.android.httpclient.Header;
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
+
+/*import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation;*/
+
 
 public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> {
     List<Tweet> mTweets;
@@ -57,13 +64,21 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
         // populate the views according to this data
         holder.tvName.setText(tweet.user.name);
         holder.tvBody.setText(tweet.body);
+        //holder.tvBody.setLinksClickable(Html.fromHtml(tweet.embedUrl));
         holder.tvCreatedAt.setText(tweet.createdAt);
         holder.tvUsername.setText("@"+tweet.user.screenName);
         holder.tvFavoriteCount.setText(String.valueOf(tweet.favoriteCount));
         holder.tvRetweetCount.setText(String.valueOf(tweet.retweetCount));
         if (tweet.favorited) { holder.btnLike.setBackgroundResource(R.drawable.ic_vector_heart); }
         if (tweet.retweeted) { holder.btnRetweet.setBackgroundResource(R.drawable.ic_vector_retweet); }
-        Glide.with(context).load(tweet.user.profileImageUrl).into(holder.ivProfileImage);
+        GlideApp.with(context)
+                .load(tweet.user.profileImageUrl)
+                .apply(RequestOptions.circleCropTransform())
+                 .into(holder.ivProfileImage);
+        GlideApp.with(context)
+                .load(tweet.embedUrl)
+                .transform(new RoundedCornersTransformation(25, 2))
+                .into(holder.ivMedia);
     }
 
     // create ViewHolder class
@@ -79,6 +94,7 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
         @BindView(R.id.btnRetweet) Button btnRetweet;
         @BindView(R.id.tvFavoriteCount) TextView tvFavoriteCount;
         @BindView(R.id.tvRetweetCount) TextView tvRetweetCount;
+        @BindView(R.id.ivMedia ) ImageView ivMedia;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -193,7 +209,6 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
                         public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                             Log.d("TweetAdapter", "Succeeded retweet");
                             btnRetweet.setBackgroundResource(R.drawable.ic_vector_retweet);
-
                             super.onSuccess(statusCode, headers, response);
                         }
                         @Override
